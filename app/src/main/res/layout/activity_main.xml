@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/tgyro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="vertical"
+            android:gravity="center"/>
+
+        <TextView
+            android:id="@+id/tgyrotrue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/acnaja"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/act0"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No activity"
+            />
+        <Button
+            android:id="@+id/act1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Walk"
+            />
+        <Button
+            android:id="@+id/act2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Run"
+            />
+        <Button
+            android:id="@+id/act3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sit"
+            />
+        <Button
+            android:id="@+id/act4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sleep"
+            />
+
+    </LinearLayout>
+</ScrollView>
