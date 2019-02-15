@@ -594,7 +594,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     protected void onDestroy() {
-        de.stop();
+//        de.stop();
+        de = null;
+        sendReceive = null;
         sensorManager.unregisterListener(this);
         unregisterReceiver(wifiReceiver);
         super.onDestroy();
@@ -832,11 +834,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 i++;
             }
 
-//            String s = new String();
-//            for (byte[] b : valueByte) {
-//                s += new String(b);
-//            }
-//            Log.d("GraphQL", s);
+            String s = new String();
+            for (byte[] b : valueByte) {
+                s += new String(b);
+            }
+            Log.d("GraphQL", s);
 
 //            value.clear();
             valueByte.clear();
