@@ -31,7 +31,6 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -141,10 +140,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         public void run() {
             try {
 
-//                gql.setSizePerRound(200);
-//                gql.setMaxTimes(3);
-
-
                 while (true) {
                     time = String.valueOf(System.currentTimeMillis() / 1000L);
                     scanwifina = false;
@@ -158,8 +153,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                                 try {
                                     if (stopvalue == false) {
                                         countsensor++;
-//                                        if(countsensor==2)
-//                                            Thread.sleep(1000);
                                         Onsensor();
                                     }
                                 } catch (Exception e) {
@@ -172,33 +165,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         sendReceive.write();
                     }
 
-//                    if (!gql.isSend()) {
-//                        for (int i = 0; i < value.size(); ++i) {
-//                            gql.addList(value.get(0));
-//                            value.remove(0);
-//                        }
-//                    }
-//
-//                    if (gql.canSend()) {
-//                        gql.setSend();
-//                    }
-//
-//                    if (gql.isSend()) {
-//                        PowerManager.WakeLock screenLock = ((PowerManager) getSystemService(POWER_SERVICE)).newWakeLock(
-//                                PowerManager.PARTIAL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "TAG");
-//                        screenLock.acquire();
-//
-//                        wifi.setWifiEnabled(true);
-//                        while (scanwifina) {}
-//
-//                        gql.send();
-//
-//                        if (!gql.isSend()) {
-//                            wifi.setWifiEnabled(false);
-//                        }
-//                    }
-
-                    Thread.sleep(10);
+                    Thread.sleep(5);
                 }
             } catch (InterruptedException e) {
 
@@ -210,14 +177,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private float[] mGeomagnetic = new float[3];
     //end Blutooth
 
-    /// p' guin
-    //private String AUTH_TOKEN ="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InNtYXJ0Lmh0LjAwNCIsImV4cCI6MTU0MjIxNTA4Mywib3JpZ19pYXQiOjE1NDIyMTQ3ODN9.YtI_jGiahVkuqRQRVy4FlIubhSQ4aVh33O_fY_2GECY";
-//    private String AUTH_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InZvbHVudGVlcjMiLCJleHAiOjE1NDA3OTczMTcsIm9yaWdfaWF0IjoxNTQwNzk3MDE3fQ.LqiKgrYxtxLyAzYfV_I3_EHNu6HiEPVdmE1-aJFNsNU";
-    //p' arrow
-    // private String AUTH_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6Im5yb3Nrb29sIiwiZXhwIjoxNTQ1NjQ4NTg5LCJvcmlnSWF0IjoxNTQ1NjQ4Mjg5fQ.9QOYWpfteQtuf7yG1PWWtBKPuiZE-2TaNenWMVkp5kQ";
-    //Ph'd Ora
-//    private String AUTH_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6Im9yYWNoYXQuY2giLCJleHAiOjE1NDU2NDg3ODksIm9yaWdJYXQiOjE1NDU2NDg0ODl9.a1NXZtqFa04vOlK2jIT34CCjKk4iERzqzzFPKfl2vx0";
-    //GraphQL gql = new GraphQL(AUTH_TOKEN);
     private float azimuth = 0f;
     //Battery////////////////////////////////////////////////////////////////////////////
     private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver() {
@@ -525,6 +484,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             if (!time.equals(last_heartrate_time)) {
                 String a = "pushHeartrate(heartrate:" + String.valueOf(sensorEvent.values[0]) + ",uts : \"" + time + "\");";
 //                value.add(a);
+                valueByte.add(a.getBytes());
+                stopvalue = false;
                 last_heartrate_time = time;
             }
         }
@@ -675,23 +636,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     String info = "pushWifi(ssid:\"" + ((wifiScanList.get(i).SSID).toString()) + "\",bssid:\"" + ((wifiScanList.get(i).BSSID).toString()) + "\"";
                     info += ",rssi:" + String.valueOf(wifiScanList.get(i).level) + ",capa:\"" + ((wifiScanList.get(i).capabilities).toString()) + "\",freq:" + ((wifiScanList.get(i).frequency));
                     info += ",uts:\"" + String.valueOf(time) + "\");";
-                    //gyro.append(info+"\n");
-//                    value.add(info);
                     valueByte.add(info.getBytes());
                 }
                 String p;
                 WifiInfo wifiInfo = wifi.getConnectionInfo();
                 //3 sleep 4 sit 5 walk 6 run
 
-//                gyro.setText("No"+n+", "+countsensor+" ->");
-//                p = "No:" + n  + ", isSend:" + gql.isSend() +"\n"
-//                        + "qSend:" + gql.getListSize() +  ", Value:" + value.size() + "\n"
-//                        +"Wifi_connect : "+wifiInfo.getSSID();
-                /*for (int i = 0; i < value.size(); i++) {
-                    p += value.get(i);
-                }*/
                 stopvalue = false;
-//                gyro.setText(p);
                 scanwifina = false;
             }
         }
@@ -834,11 +785,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 i++;
             }
 
-            String s = new String();
-            for (byte[] b : valueByte) {
-                s += new String(b);
-            }
-            Log.d("GraphQL", s);
+//            String s = new String();
+//            for (byte[] b : valueByte) {
+//                s += new String(b);
+//            }
+//            Log.d("GraphQL", s);
 
 //            value.clear();
             valueByte.clear();
