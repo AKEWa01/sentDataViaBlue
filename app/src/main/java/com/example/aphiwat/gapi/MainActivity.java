@@ -39,9 +39,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -71,8 +76,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     //    List<String>value = new ArrayList<String>();
     List<byte[]> valueByte = new ArrayList<byte[]>();
     String la = "0", lo = "0", time = "0";
-    String last_heartrate_time = "0";
-    int activity = 0;//3 sleep 4 sit 5 walk 6 run
+    //    String last_heartrate_time = "0";
+    int activity = 1;
     ListView lv_paired_devices;
     TextView msg_box;
     EditText writeNa;
@@ -83,6 +88,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     BluetoothAdapter bluetoothAdapter;
     SendReceive sendReceive;
     String bluetooth_message = "00";
+
+    JSONObject sensorSuit;
+
     @SuppressLint("HandlerLeak")
     Handler mHandler = new Handler() {
         @Override
@@ -269,26 +277,46 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         } else if (countsensor == 8) {
             //gyro.setText(String.valueOf(level) + "%");
-            String aaas = "pushPredict(true:" + activity + ",uts:\"" + time + "\");";
+
+            try {
+                sensorSuit.put("real", activity);
+                sensorSuit.put("bat", level);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+//            String aaas = "pushPredict(true:" + activity + ",uts:\"" + time + "\");";
 //            value.add(aaas);
-            valueByte.add(aaas.getBytes());
-            String b = "pushBattery(battery:" + String.valueOf(level) + ",uts:\"" + time + "\");";
+//            valueByte.add(aaas.getBytes());
+//            String b = "pushBattery(battery:" + String.valueOf(level) + ",uts:\"" + time + "\");";
 //            value.add(b);
-            valueByte.add(b.getBytes());
+//            valueByte.add(b.getBytes());
             stopvalue = false;
         } else if (countsensor == 9) {
-            String b = "pushGps(point:\"POINT(" + la + " " + lo + ")\",uts:\"" + time + "\");";
+            try {
+                sensorSuit.put("point", "POINT(" + la + " " + lo + ")");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+//            String b = "pushGps(point:\"POINT(" + la + " " + lo + ")\",uts:\"" + time + "\");";
 //            value.add(b);
-            valueByte.add(b.getBytes());
+//            valueByte.add(b.getBytes());
             stopvalue = false;
             //wifi.startScan();
         } else if (countsensor == 10) {
             if (accel == null) {
                 stopvalue = false;
             } else {
-                String b = "pushStep(step:" + numSteps + ",uts:\"" + time + "\");";
+
+                try {
+                    sensorSuit.put("step", numSteps);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+//                String b = "pushStep(step:" + numSteps + ",uts:\"" + time + "\");";
 //                value.add(b);
-                valueByte.add(b.getBytes());
+//                valueByte.add(b.getBytes());
                 stopvalue = false;
             }
         } else if (countsensor == 11) {
@@ -321,6 +349,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        sensorSuit = new JSONObject();
 
         //bluetooth
         adapter_paired_devices = new ArrayAdapter(getApplicationContext(), R.layout.support_simple_spinner_dropdown_item);
@@ -391,7 +421,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
                 Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 startActivity(i);
-            }
+            }3
         };
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -409,7 +439,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onClick(View view) {
                 actna.setText("Activity : noActivity");
-                activity = 0;
+                activity = 1;
             }
         });
         walk.setOnClickListener(new View.OnClickListener() {
@@ -466,55 +496,128 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if (senall.getType() == Sensor.TYPE_ACCELEROMETER && countsensor == 0 && stopvalue) {
             //gyro.setText("ACCE\nX : " + sensorEvent.values[0] + "\n Y : " + sensorEvent.values[1] + "\n Z : " + sensorEvent.values[2]);
 
-            String a = "pushAccelerate(" + "x:" + String.valueOf(sensorEvent.values[0]) + ",y:" + String.valueOf(sensorEvent.values[1])
-                    + ",z:" + String.valueOf(sensorEvent.values[2]) + ",uts:\"" + time + "\");";
+            if (sensorSuit.length() != 0) {
+//                Log.d("GraphQL", sensorSuit.toString());
+                byte[] b = new byte[0];
+                try {
+                    b = sensorSuit.toString().getBytes("utf-8");
+                    valueByte.add(b);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            sensorSuit = new JSONObject();
+
+
+            JSONArray acc_value = new JSONArray();
+            try {
+                acc_value.put(sensorEvent.values[0]);
+                acc_value.put(sensorEvent.values[1]);
+                acc_value.put(sensorEvent.values[2]);
+
+                sensorSuit.put("uts", time);
+                sensorSuit.put("acc", acc_value);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+//            String a = "pushAccelerate(" + "x:" + String.valueOf(sensorEvent.values[0]) + ",y:" + String.valueOf(sensorEvent.values[1])
+//                    + ",z:" + String.valueOf(sensorEvent.values[2]) + ",uts:\"" + time + "\");";
 //            value.add(a);
-            valueByte.add(a.getBytes());
+//            valueByte.add(a.getBytes());
             stopvalue = false;
         }
         if (senall.getType() == Sensor.TYPE_GYROSCOPE && countsensor == 1 && stopvalue) {
             //gyro.setText("Gyro\nX : " + sensorEvent.values[0] + "\n Y : " + sensorEvent.values[1] + "\n Z : " + sensorEvent.values[2]);
-            String a = "pushGyro(" + "x:" + String.valueOf(sensorEvent.values[0]) + ",y:" + String.valueOf(sensorEvent.values[1])
-                    + ",z:" + String.valueOf(sensorEvent.values[2]) + ",uts:\"" + time + "\");";
+
+            JSONArray gyro_value = new JSONArray();
+            try {
+                gyro_value.put(sensorEvent.values[0]);
+                gyro_value.put(sensorEvent.values[1]);
+                gyro_value.put(sensorEvent.values[2]);
+
+                sensorSuit.put("gyro", gyro_value);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+//            String a = "pushGyro(" + "x:" + String.valueOf(sensorEvent.values[0]) + ",y:" + String.valueOf(sensorEvent.values[1])
+//                    + ",z:" + String.valueOf(sensorEvent.values[2]) + ",uts:\"" + time + "\");";
 //            value.add(a);
-            valueByte.add(a.getBytes());
+//            valueByte.add(a.getBytes());
             stopvalue = false;
         }
         if (senall.getType() == Sensor.TYPE_HEART_RATE) {
-            if (!time.equals(last_heartrate_time)) {
-                String a = "pushHeartrate(heartrate:" + String.valueOf(sensorEvent.values[0]) + ",uts : \"" + time + "\");";
-//                value.add(a);
-                valueByte.add(a.getBytes());
-                stopvalue = false;
-                last_heartrate_time = time;
+//            if (!time.equals(last_heartrate_time)) {
+
+            try {
+                sensorSuit.put("hr", sensorEvent.values[0]);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
+
+//                String a = "pushHeartrate(heartrate:" + String.valueOf(sensorEvent.values[0]) + ",uts : \"" + time + "\");";
+//                value.add(a);
+//                valueByte.add(a.getBytes());
+            stopvalue = false;
+//                last_heartrate_time = time;
+//            }
         }
         if (countsensor == 3 && senall.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE && stopvalue) {
             //gyro.setText("Temp : " + sensorEvent.values[0]);
-            String a = "pushTemperature(temperature:" + String.valueOf(sensorEvent.values[0]) + ",uts : \"" + time + "\");";
+
+            try {
+                sensorSuit.put("temp", sensorEvent.values[0]);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+//            String a = "pushTemperature(temperature:" + String.valueOf(sensorEvent.values[0]) + ",uts : \"" + time + "\");";
 //            value.add(a);
-            valueByte.add(a.getBytes());
+//            valueByte.add(a.getBytes());
             stopvalue = false;
         }
         if (countsensor == 4 && senall.getType() == Sensor.TYPE_RELATIVE_HUMIDITY && stopvalue) {
             //gyro.setText("HUMDITY : "+sensorEvent.values[0]);
-            String a = "pushHumdity(humdity:" + String.valueOf(sensorEvent.values[0]) + ",uts:\"" + time + "\");";
+
+            try {
+                sensorSuit.put("hum", sensorEvent.values[0]);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+//            String a = "pushHumdity(humdity:" + String.valueOf(sensorEvent.values[0]) + ",uts:\"" + time + "\");";
 //            value.add(a);
-            valueByte.add(a.getBytes());
+//            valueByte.add(a.getBytes());
             stopvalue = false;
         }
         if (countsensor == 5 && senall.getType() == Sensor.TYPE_LIGHT && stopvalue) {
             //gyro.setText("Light : "+sensorEvent.values[0]);
-            String a = "pushLight(light:" + String.valueOf(sensorEvent.values[0]) + ",uts:\"" + time + "\");";
+
+            try {
+                sensorSuit.put("light", sensorEvent.values[0]);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+//            String a = "pushLight(light:" + String.valueOf(sensorEvent.values[0]) + ",uts:\"" + time + "\");";
 //            value.add(a);
-            valueByte.add(a.getBytes());
+//            valueByte.add(a.getBytes());
             stopvalue = false;
         }
         if (countsensor == 6 && senall.getType() == Sensor.TYPE_PRESSURE && stopvalue) {
             //gyro.setText("Pressure : "+sensorEvent.values[0]);
-            String a = "pushPressure(pressure:" + String.valueOf(sensorEvent.values[0]) + ",uts:\"" + time + "\");";
+
+            try {
+                sensorSuit.put("pres", sensorEvent.values[0]);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+//            String a = "pushPressure(pressure:" + String.valueOf(sensorEvent.values[0]) + ",uts:\"" + time + "\");";
 //            value.add(a);
-            valueByte.add(a.getBytes());
+//            valueByte.add(a.getBytes());
             stopvalue = false;
         }
         if (countsensor == 7 && stopvalue) {
@@ -540,9 +643,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     azimuth = (azimuth + 360) % 360;
 
                     //gyro.setText("Compass\n"+azimuth);
-                    String a = "pushCompass(compass:" + String.valueOf(azimuth) + ",uts:\"" + time + "\");";
+
+                    try {
+                        sensorSuit.put("comp", azimuth);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+//                    String a = "pushCompass(compass:" + String.valueOf(azimuth) + ",uts:\"" + time + "\");";
 //                    value.add(a);
-                    valueByte.add(a.getBytes());
+//                    valueByte.add(a.getBytes());
                     stopvalue = false;
                 }
             }
@@ -631,14 +741,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             List<ScanResult> wifiScanList = wifi.getScanResults();
             //gyro.setText("WTF");
             if (scanwifina) {
-                for (int i = 0; i < wifiScanList.size(); i++) {
-                    //String info = ((wifiScanList.get(i)).toString());
-                    String info = "pushWifi(ssid:\"" + ((wifiScanList.get(i).SSID).toString()) + "\",bssid:\"" + ((wifiScanList.get(i).BSSID).toString()) + "\"";
-                    info += ",rssi:" + String.valueOf(wifiScanList.get(i).level) + ",capa:\"" + ((wifiScanList.get(i).capabilities).toString()) + "\",freq:" + ((wifiScanList.get(i).frequency));
-                    info += ",uts:\"" + String.valueOf(time) + "\");";
-                    valueByte.add(info.getBytes());
-                }
-                String p;
+//                for (int i = 0; i < wifiScanList.size(); i++) {
+//                    //String info = ((wifiScanList.get(i)).toString());
+//                    String info = "pushWifi(ssid:\"" + ((wifiScanList.get(i).SSID).toString()) + "\",bssid:\"" + ((wifiScanList.get(i).BSSID).toString()) + "\"";
+//                    info += ",rssi:" + String.valueOf(wifiScanList.get(i).level) + ",capa:\"" + ((wifiScanList.get(i).capabilities).toString()) + "\",freq:" + ((wifiScanList.get(i).frequency));
+//                    info += ",uts:\"" + String.valueOf(time) + "\");";
+//                    valueByte.add(info.getBytes());
+//                }
+//                String p;
                 WifiInfo wifiInfo = wifi.getConnectionInfo();
                 //3 sleep 4 sit 5 walk 6 run
 
