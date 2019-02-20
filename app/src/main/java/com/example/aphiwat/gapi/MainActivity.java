@@ -500,8 +500,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
             if (sensorSuit.length() != 0) {
                 byte[] b = new byte[0];
+                String s = sensorSuit.toString() + ";";
                 try {
-                    b = sensorSuit.toString().getBytes("utf-8");
+                    b = s.getBytes("utf-8");
                     valueByte.add(b);
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
@@ -513,7 +514,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 try {
                     for (int i = 0; i < wifiSuit.length(); ++i) {
                         try {
-                            b = wifiSuit.getJSONObject(i).toString().getBytes("utf-8");
+                            String s = wifiSuit.getJSONObject(i).toString() + ";";
+                            b = s.getBytes("utf-8");
                             valueByte.add(b);
                         } catch (JSONException e) {
                             e.printStackTrace();
