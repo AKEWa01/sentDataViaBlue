@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     String bluetooth_message = "00";
 
     JSONObject sensorSuit;
+    JSONArray wifiSuit;
 
     @SuppressLint("HandlerLeak")
     Handler mHandler = new Handler() {
@@ -351,6 +352,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     protected void onCreate(Bundle savedInstanceState) {
 
         sensorSuit = new JSONObject();
+        wifiSuit = new JSONArray();
 
         //bluetooth
         adapter_paired_devices = new ArrayAdapter(getApplicationContext(), R.layout.support_simple_spinner_dropdown_item);
@@ -421,7 +423,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
                 Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 startActivity(i);
-            }3
+            }
         };
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -497,7 +499,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             //gyro.setText("ACCE\nX : " + sensorEvent.values[0] + "\n Y : " + sensorEvent.values[1] + "\n Z : " + sensorEvent.values[2]);
 
             if (sensorSuit.length() != 0) {
-//                Log.d("GraphQL", sensorSuit.toString());
                 byte[] b = new byte[0];
                 try {
                     b = sensorSuit.toString().getBytes("utf-8");
@@ -507,8 +508,24 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 }
             }
 
-            sensorSuit = new JSONObject();
+            if (wifiSuit.length() != 0) {
+                byte[] b = new byte[0];
+                try {
+                    for (int i = 0; i < wifiSuit.length(); ++i) {
+                        try {
+                            b = wifiSuit.getJSONObject(i).toString().getBytes("utf-8");
+                            valueByte.add(b);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
 
+            sensorSuit = new JSONObject();
+            wifiSuit = new JSONArray();
 
             JSONArray acc_value = new JSONArray();
             try {
@@ -741,7 +758,25 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             List<ScanResult> wifiScanList = wifi.getScanResults();
             //gyro.setText("WTF");
             if (scanwifina) {
-//                for (int i = 0; i < wifiScanList.size(); i++) {
+
+                try {
+                    for (int i = 0; i < wifiScanList.size(); i++) {
+                        JSONObject wifi_value = new JSONObject();
+
+                        wifi_value.put("uts", time);
+                        wifi_value.put("ssid", (wifiScanList.get(i).SSID).toString());
+                        wifi_value.put("bssid", (wifiScanList.get(i).BSSID).toString());
+                        wifi_value.put("rssi", wifiScanList.get(i).level);
+                        wifi_value.put("capa", (wifiScanList.get(i).capabilities).toString());
+                        wifi_value.put("freq", wifiScanList.get(i).frequency);
+
+                        wifiSuit.put(wifi_value);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+//
 //                    //String info = ((wifiScanList.get(i)).toString());
 //                    String info = "pushWifi(ssid:\"" + ((wifiScanList.get(i).SSID).toString()) + "\",bssid:\"" + ((wifiScanList.get(i).BSSID).toString()) + "\"";
 //                    info += ",rssi:" + String.valueOf(wifiScanList.get(i).level) + ",capa:\"" + ((wifiScanList.get(i).capabilities).toString()) + "\",freq:" + ((wifiScanList.get(i).frequency));
