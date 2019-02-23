@@ -276,7 +276,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             stopvalue = false;
         } else if (countsensor == 9) {
             try {
-                sensorSuit.put("point", "POINT(" + la + " " + lo + ")");
+                sensorSuit.put("loc", "POINT(" + la + " " + lo + ")");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -617,7 +617,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     //gyro.setText("Compass\n"+azimuth);
 
                     try {
-                        sensorSuit.put("comp", azimuth);
+                        sensorSuit.put("mag", azimuth);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
