@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     countsensor = 0;
                     Onsensor();
                     n++;
-                    while (countsensor < 11) {
+                    while (countsensor < 2) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -216,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             if (accel == null) {
                 stopvalue = false;
             } else {
-                sensorManager.registerListener(MainActivity.this, accel, SensorManager.SENSOR_DELAY_FASTEST);
+                //sensorManager.registerListener(MainActivity.this, accel, SensorManager.SENSOR_DELAY_FASTEST);
             }
         } else if (countsensor == 1) {
             if (senGy == null) {
@@ -224,87 +224,88 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             } else {
                 sensorManager.registerListener(MainActivity.this, senGy, SensorManager.SENSOR_DELAY_FASTEST);
             }
-        } else if (countsensor == 2) {
-            stopvalue = false;
-        } else if (countsensor == 3) {
-            if (temperature == null) {
-                //gyro.setText("No TEMp");
-                stopvalue = false;
-                countsensor++;
-            } else {
-                sensorManager.registerListener(MainActivity.this, temperature, SensorManager.SENSOR_DELAY_NORMAL);
-            }
-        } else if (countsensor == 4) {
-            if (humidity == null) {
-                //gyro.setText("No Sensor hUMIDITY");
-                stopvalue = false;
-            } else {
-                sensorManager.registerListener(MainActivity.this, humidity, SensorManager.SENSOR_DELAY_NORMAL);
-            }
-        } else if (countsensor == 5) {
-            if (light == null) {
-                //gyro.setText("No light sensor");
-                stopvalue = false;
-            } else {
-                sensorManager.registerListener(MainActivity.this, light, SensorManager.SENSOR_DELAY_NORMAL);
-            }
-        } else if (countsensor == 6) {
-            if (pressure == null) {
-                //gyro.setText("No Pressure");
-                stopvalue = false;
-            } else {
-                sensorManager.registerListener(MainActivity.this, pressure, SensorManager.SENSOR_DELAY_NORMAL);
-            }
-        } else if (countsensor == 7) {
-            if (geomagnetic == null) {
-                //gyro.setText("No magentic");
-                stopvalue = false;
-            } else {
-                sensorManager.registerListener(MainActivity.this, geomagnetic, SensorManager.SENSOR_DELAY_GAME);
-                sensorManager.registerListener(MainActivity.this, accel, SensorManager.SENSOR_DELAY_GAME);
-            }
-        } else if (countsensor == 8) {
-            //gyro.setText(String.valueOf(level) + "%");
-
-            try {
-                sensorSuit.put("real", activity);
-                sensorSuit.put("bat", level);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            stopvalue = false;
-        } else if (countsensor == 9) {
-            try {
-                sensorSuit.put("loc", "POINT(" + la + " " + lo + ")");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            stopvalue = false;
-            //wifi.startScan();
-        } else if (countsensor == 10) {
-            if (accel == null) {
-                stopvalue = false;
-            } else {
-
-                try {
-                    sensorSuit.put("step", numSteps);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                stopvalue = false;
-            }
-        } else if (countsensor == 11) {
-
-            if (wifi.isWifiEnabled() == false) {
-                wifi.setWifiEnabled(true);
-            }
-
-            wifi.startScan();
-            scanwifina = true;
         }
+//        else if (countsensor == 2) {
+//            stopvalue = false;
+//        } else if (countsensor == 3) {
+//            if (temperature == null) {
+//                //gyro.setText("No TEMp");
+//                stopvalue = false;
+//                countsensor++;
+//            } else {
+//                sensorManager.registerListener(MainActivity.this, temperature, SensorManager.SENSOR_DELAY_NORMAL);
+//            }
+//        } else if (countsensor == 4) {
+//            if (humidity == null) {
+//                //gyro.setText("No Sensor hUMIDITY");
+//                stopvalue = false;
+//            } else {
+//                sensorManager.registerListener(MainActivity.this, humidity, SensorManager.SENSOR_DELAY_NORMAL);
+//            }
+//        } else if (countsensor == 5) {
+//            if (light == null) {
+//                //gyro.setText("No light sensor");
+//                stopvalue = false;
+//            } else {
+//                sensorManager.registerListener(MainActivity.this, light, SensorManager.SENSOR_DELAY_NORMAL);
+//            }
+//        } else if (countsensor == 6) {
+//            if (pressure == null) {
+//                //gyro.setText("No Pressure");
+//                stopvalue = false;
+//            } else {
+//                sensorManager.registerListener(MainActivity.this, pressure, SensorManager.SENSOR_DELAY_NORMAL);
+//            }
+//        } else if (countsensor == 7) {
+//            if (geomagnetic == null) {
+//                //gyro.setText("No magentic");
+//                stopvalue = false;
+//            } else {
+//                sensorManager.registerListener(MainActivity.this, geomagnetic, SensorManager.SENSOR_DELAY_GAME);
+//                sensorManager.registerListener(MainActivity.this, accel, SensorManager.SENSOR_DELAY_GAME);
+//            }
+//        } else if (countsensor == 8) {
+//            //gyro.setText(String.valueOf(level) + "%");
+//
+//            try {
+//                sensorSuit.put("real", activity);
+//                sensorSuit.put("bat", level);
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//
+//            stopvalue = false;
+//        } else if (countsensor == 9) {
+//            try {
+//                sensorSuit.put("loc", "POINT(" + la + " " + lo + ")");
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//
+//            stopvalue = false;
+//            //wifi.startScan();
+//        } else if (countsensor == 10) {
+//            if (accel == null) {
+//                stopvalue = false;
+//            } else {
+//
+//                try {
+//                    sensorSuit.put("step", numSteps);
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                stopvalue = false;
+//            }
+//        } else if (countsensor == 11) {
+//
+//            if (wifi.isWifiEnabled() == false) {
+//                wifi.setWifiEnabled(true);
+//            }
+//
+//            wifi.startScan();
+//            scanwifina = true;
+//        }
         //gyro2.setText(String.valueOf(countsensor));
     }
 
