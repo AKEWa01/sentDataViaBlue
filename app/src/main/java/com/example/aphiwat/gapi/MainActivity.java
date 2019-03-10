@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     PowerManager pm;
     PowerManager.WakeLock wl;
     boolean stopvalue = true, scanwifina = false;
-    //    List<String>value = new ArrayList<String>();
+    List<String>value = new ArrayList<String>();
     List<byte[]> valueByte = new ArrayList<byte[]>();
     String la = "0", lo = "0", time = "0";
     //    String last_heartrate_time = "0";
@@ -307,6 +307,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //            scanwifina = true;
 //        }
         //gyro2.setText(String.valueOf(countsensor));
+        wifi.startScan();
+        scanwifina = true;
     }
 
     @Override
@@ -336,9 +338,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         screenLock.acquire();
 
         //bluetooth
-        adapter_paired_devices = new ArrayAdapter(getApplicationContext(), R.layout.support_simple_spinner_dropdown_item);
-        initialize_bluetooth();
-        start_accepting_connection();
+//        adapter_paired_devices = new ArrayAdapter(getApplicationContext(), R.layout.support_simple_spinner_dropdown_item);
+//
+//        initialize_bluetooth();
+//        start_accepting_connection();
 
 
         numSteps = 0;
@@ -413,8 +416,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             return;
         }
         locationManager.requestLocationUpdates("gps", 1000, 0, listener);
-        /*la=String.valueOf(locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLatitude());
-        lo=String.valueOf(locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLongitude());*/
         //--Set Time
         //3 sleep 4 sit 5 walk 6 run
         noac.setOnClickListener(new View.OnClickListener() {
@@ -496,6 +497,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         try {
                             String s = wifiSuit.getJSONObject(i).toString() + ";";
                             b = s.getBytes("utf-8");
+                            value.add(s);
                             valueByte.add(b);
                         } catch (JSONException e) {
                             e.printStackTrace();
